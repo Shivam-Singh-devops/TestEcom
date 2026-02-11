@@ -1,16 +1,22 @@
-Simple E-Commerce REST API (Spring Boot)
+E-Commerce REST API (Spring Boot)
 Overview
 
 This project is a simple Java backend application built using Spring Boot.
-It implements a RESTful API for managing a collection of items (similar to products in an e-commerce system).
+It implements a RESTful API for managing a collection of items, similar to products in an e-commerce system.
 
-The application uses an in-memory data store (ArrayList) to manage items and provides API endpoints to:
+The application allows users to:
 
 Add a new item
 
-Get a single item by ID
+Retrieve all items
 
-No external database is used.
+Retrieve a single item by ID
+
+Update an existing item
+
+Delete an item
+
+The data is stored in-memory using an ArrayList, meaning no external database is required.
 
 Technologies Used
 
@@ -20,18 +26,37 @@ Spring Boot
 
 Maven
 
-In-memory storage (ArrayList)
+REST API
+
+In-memory data storage (ArrayList)
+
+Project Structure
+com.shivam.Ecom
+│
+├── controller
+│   └── Ecom.java
+│
+├── service
+│   └── itemService.java
+│
+├── repo
+│   └── EcomRepo.java
+│
+├── model
+│   └── itemModel.java
+│
+└── EcomApplication.java
 
 How to Run the Application
-1. Clone the project
-   git clone <your-repo-link>
-   cd <project-folder>
+1. Clone the Repository
+git clone <your-repository-link>
+cd <project-folder>
 
-2. Build the project
-   mvn clean package
+2. Build the Project
+mvn clean package
 
-3. Run the application
-   java -jar target/Ecom-app.jar
+3. Run the Application
+java -jar target/Ecom-app.jar
 
 
 OR
@@ -39,140 +64,202 @@ OR
 mvn spring-boot:run
 
 
-The application runs on:
+The application will start on:
 
 http://localhost:8080
 
 Base URL
 http://localhost:8080/app
 
+
+When deployed:
+
+https://your-deployed-url/app
+
 API Endpoints
-1. Add a New Item
+1. Get All Items
+Endpoint
+GET /app/getAll
 
-Endpoint -->POST /app/addItem
+Description
 
+Returns a list of all items stored in memory.
 
-Request Body Example
+Response
+
+Status: 200 OK
+
+[
+  {
+    "id": 1,
+    "name": "Wireless Mouse",
+    "description": "Ergonomic wireless mouse",
+    "rating": 4,
+    "quantity": 50,
+    "inStock": true,
+    "brand": "LogiTech",
+    "category": "Electronics"
+  }
+]
+
+2. Get Item by ID
+Endpoint
+GET /app/get/{id}
+
+Description
+
+Returns a single item based on its ID.
+
+Example
+GET /app/get/1
+
+Success Response
+
+Status: 200 OK
 
 {
-"id": 1,
-"name": "Wireless Mouse",
-"description": "Ergonomic wireless mouse",
-"rating": 4,
-"quantity": 50,
-"inStock": true,
-"brand": "LogiTech",
-"category": "Electronics"
+  "id": 1,
+  "name": "Wireless Mouse",
+  "description": "Ergonomic wireless mouse",
+  "rating": 4,
+  "quantity": 50,
+  "inStock": true,
+  "brand": "LogiTech",
+  "category": "Electronics"
 }
 
+Error Response
+
+Status: 404 Not Found
+Returned if the item does not exist.
+
+3. Add New Item
+Endpoint
+POST /app/addItem
+
+Description
+
+Adds a new item to the in-memory data store.
+
+Request Body Example
+{
+  "id": 2,
+  "name": "Mechanical Keyboard",
+  "description": "RGB backlit keyboard",
+  "rating": 5,
+  "quantity": 60,
+  "inStock": true,
+  "brand": "KeyChron",
+  "category": "Electronics"
+}
 
 Validation Rules
 
-Name must not be null or empty
+name must not be null or empty
 
-Rating must be between 1 and 5
+rating must be between 1 and 5
 
-Quantity must be greater than or equal to 0
+quantity must be greater than or equal to 0
 
-Brand must not be null
+brand must not be null
 
-Category must not be null
+category must not be null
 
-If validation fails, the API returns:
+Success Response
 
-400 Bad Request
+Status: 200 OK
 
-2. Get Item by ID
+Returns the created item.
 
-Endpoint
+Error Response
 
-GET /app/get/{id}
+Status: 400 Bad Request
 
-
-Example
-
-GET /app/get/1
-
-
-Response Example
+Example:
 
 {
-"id": 1,
-"name": "Wireless Mouse",
-"description": "Ergonomic wireless mouse",
-"rating": 4,
-"quantity": 50,
-"inStock": true,
-"brand": "LogiTech",
-"category": "Electronics"
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Name is required",
+  "timestamp": "2026-02-11T11:23:04"
 }
 
+4. Update Item
+Endpoint
+PUT /app/update/{id}
 
-If item is not found, the API returns:
+Description
 
-404 Not Found
+Updates an existing item using its ID.
 
-Implementation Details
-Item Model
+Example
+PUT /app/update/1
 
-Represents an item with the following fields:
+Request Body
+{
+  "name": "Updated Mouse",
+  "description": "Updated description",
+  "rating": 4,
+  "quantity": 40,
+  "inStock": true,
+  "brand": "LogiTech",
+  "category": "Electronics"
+}
 
-id (int)
+Success Response
 
-name (String)
+Status: 200 OK
 
-description (String)
+Returns the updated item.
 
-rating (int)
+Error Response
 
-quantity (int)
+404 Not Found – Item does not exist
 
-inStock (boolean)
+400 Bad Request – Validation fails
 
-brand (String)
+5. Delete Item
+Endpoint
+DELETE /app/delete/{id}
 
-category (String)
+Description
 
-Validation is implemented using either manual validation or Bean Validation annotations.
+Deletes an item by its ID.
+
+Example
+DELETE /app/delete/1
+
+Success Response
+
+Status: 200 OK
+
+No response body.
+
+Error Response
+
+Status: 404 Not Found
 
 Data Storage
 
-Items are stored in:
+Items are stored in an in-memory ArrayList.
 
-private List<ItemModel> items = new ArrayList<>();
+No external database is used.
+
+All data will be lost when the application restarts.
+
+Input Validation
+
+Validation is implemented to ensure:
+
+Required fields are present
+
+Rating values are within valid range
+
+Quantity is non-negative
+
+Invalid input returns 400 Bad Request
 
 
-This acts as an in-memory database.
+It uses RESTful conventions for HTTP methods.
 
-Note:
-
-Data is not persisted.
-
-Restarting the application clears all data.
-
-Error Handling
-
-Custom error responses are returned for:
-
-Validation errors (400)
-
-Item not found (404)
-
-Project Structure
-com.shivam.Ecom
-│
-├── controller
-├── service
-├── model
-├── exception
-└── EcomApplication.java
-
-Important Notes
-
-This project uses an in-memory data store.
-
-No external database is required.
-
-Designed for learning REST API fundamentals.
-
-Can be containerized using Docker for deployment.
+It does not persist data beyond runtime.
