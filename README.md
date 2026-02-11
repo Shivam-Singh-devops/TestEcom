@@ -4,6 +4,8 @@ Overview
 This project is a simple Java backend application built using Spring Boot.
 It implements a RESTful API for managing a collection of items, similar to products in an e-commerce system.
 
+For all the API check last(in simple)
+
 The application allows users to:
 
 Add a new item
@@ -263,3 +265,23 @@ Invalid input returns 400 Bad Request
 It uses RESTful conventions for HTTP methods.
 
 It does not persist data beyond runtime.
+
+
+API
+http://localhost:8080/app/getAll ---> to get all the items.
+http://localhost:8080/app/get/{id}  ---> to get the single item from the items.
+http://localhost:8080/app/delete/{id}  ----> to delete the item from the database
+http://localhost:8080/app/addItem    ---> to add the element in the in-database (you have to provide the itemModel)
+follow this order->
+Example:
+{
+  "id": 2,
+  "name": "Mechanical Keyboard",
+  "description": "RGB backlit keyboard",
+  "rating": 5,
+  "quantity": 60,
+  "inStock": true,
+  "brand": "KeyChron",
+  "category": "Electronics"
+}
+http://localhost:8080/app/update/{id}   ---> to update any item by the id in the in-database.
